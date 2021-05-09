@@ -1,4 +1,4 @@
-[elements,connections]=read('test.xlsx');
+[elements,connections,guidings]=read('test.xlsx');
 elements(2).angle = pi/2;
 elements(3).angle = asin(4/5);
 q=[];
@@ -7,4 +7,5 @@ q=[];
 % end
 q=[0,0,pi,-1,0,atan(4/3),2,4,0];
 q=q';
-[FI,FI_q] = constraints(q,elements,connections);
+t=sqrt(pi/2);
+[FI,FI_q,FI_t] = constraints(q,elements,connections,guidings,t);

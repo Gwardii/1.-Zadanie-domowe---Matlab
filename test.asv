@@ -1,6 +1,0 @@
-[elements,connections]=read('test.xlsx');
-elements(2).angle = pi/2;
-elements(3).angle = asin(4/5);
-for element = elements
-    q(end+1:end+2) = [elements.A
-%[FI,FI_q] = constraints(q,elements,connections)

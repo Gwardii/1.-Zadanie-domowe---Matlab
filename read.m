@@ -1,7 +1,11 @@
-function [elements,connections] = read(path)
+function [elements,connections,guidings] = read(path)
 A = readmatrix(path,'Range','A2','Sheet','Człony');
 B = readmatrix(path,'Range','A2','Sheet','Połączenia');
-connections=[];
+[~,~,C] = xlsread(path,'Połączenia');
+C=C(2:end,8);
+connections=struct('pin',pin.empty,'slider',slider.empty);
+guidings = struct('whichConnection',[],'formula',[]);
+guidings = guidings([]);
 k=1;
 l=1;
 for i = 1:height(A)
@@ -22,4 +26,10 @@ for i = 1:height(B)
         l=l+1;
     end
 end
+for i = 1:height(C)
+    if ~isnan(C{i})
+        guiding.whichConnection = i;
+        guiding.formula = @(t)eval(C{i});
+        guidings(end+1) = guiding;
+    end
 end
