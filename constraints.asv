@@ -1,8 +1,9 @@
 function [FI,FI_q,FI_t] = constraints(q,elements,connections,guidings,t)
 FI=[];
 FI_q=zeros(0,height(q));
-FI_t=zeros(2*width(connections.pin)+width(connections.slider),1);
+FI_t=zeros(2*(width(connections.pin)+width(connections.slider)),1);
 Omega = [0,-1;1,0];
+eps = 1e-6;
 for connection = connections.pin
     i=connection.connection(1);
     j=connection.connection(2);
@@ -82,6 +83,11 @@ for connection = connections.slider
     end
     FI_q([end+1,end+2],:) = temp;
 end
+if height(FI_q) == width(FI_q)
+    warning('Zadane więzy kinematyczne odbierają wszystkie swobody ruchu');
+elseif height(FI_q) >= width(FI_q)
+    throw(MException('MyComponent:tooManyConstraints','Zadane więzy kinematyczne przesztywniają układ -> rozwiązanie dla ciał sztywnych niemożliwe'))
+end
 for guiding = guidings
     wC = guiding.whichConnection;
     formula = guiding.formula;
@@ -149,5 +155,13 @@ for guiding = guidings
     FI_q(end+1,:) = temp(:);
     formulaDiff = matlabFunction(diff(sym(formula)));
     FI_t(end+1) = -formulaDiff(t);
+end
+if height(FI_q) == width(FI_q)
+    if abs(det(FI_q)) <= eps
+    throw(MException('MyComponent:singularity','Wyznacznik macierzy Jacobiego zeruje się -> układ znalazł się w położeniu osobliwym')) 
+elseif height(FI_q) <= width(FI_q)
+    throw(MException('MyComponent:notEnoughConstraints','Zadane więzy (kinematyczne i kierujące) nie odbierają wszystkich stopni swobody'))
+else
+    throw(MException('MyComponent:tooManyConstraints','Zadane więzy (kinematyczne i kierujące) przesztywniają układ -> rozwiązanie dla ciał sztywnych niemożliwe'))
 end
 end  
