@@ -39,7 +39,7 @@ for connection = connections.slider
         fi_j_prim = q_prim(j+2);
         R_j = Rot(fi_j);
         v = connection.v;
-        Gamma(iter) = -(Omega*R_j*v)'*r_j_prim*fi_j_prim+...
+        Gamma(iter) = -2*(Omega*R_j*v)'*r_j_prim*fi_j_prim+...
             (R_j*v)'*(r_j-Sa)*fi_j_prim^2;
     elseif j <= 0
         fi_i = q(i+2);
@@ -84,7 +84,7 @@ for guiding = guidings
         R_j = Rot(fi_j);
         v = connection.v;
         v = v/norm(v);
-        Gamma(iter) = (R_j*v)'*r_j_prim*fi_j_prim+...
+        Gamma(iter) = 2*(R_j*v)'*r_j_prim*fi_j_prim+...
             (R_j*Omega*v)'*(r_j-Sa)*fi_j_prim^2;
         elseif j<=0
         fi_i = q(i+2);
