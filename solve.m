@@ -1,8 +1,7 @@
-%clear;
-%clc;
-tp = 0;
-h = .05;
-tk = 1.5;
+function results = solve(path,time)
+tp = time(1);
+h = time(2)-time(1);
+tk = time(end);
 t=tp;
 numberOfSteps = round((tk-tp)/h);
 [elements,connections,guidings]=read(path);
@@ -27,8 +26,4 @@ while(t<tk+h)
     t=t+h;
     iter = iter+1;
 end
-time = tp:h:tk;
-plot_result = @(element_no)plot_result(element_no,results,time);
-plot_point_lcs = @(point,element_no)plot_point(point,element_no,results,time);
-plot_point_acs = @(point,element_no)...
-    plot_point(point-results.q(3*element_no-2:3*element_no-1,1),element_no,results,time);
+end
