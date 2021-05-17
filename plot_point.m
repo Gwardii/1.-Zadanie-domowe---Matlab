@@ -14,7 +14,7 @@ for fi = fis
     r_biss(:,iter) = r_biss(:,iter) + Omega*R*point*fi_biss(iter) - R*point*fi_prims(iter)^2; %przyśpieszenie
     iter = iter+1;
 end
-figure('Name',sprintf('Wyniki dla punktu [%d; %d] związanego z członem %d.',point,element_no),...
+figure('Name',sprintf('Wyniki dla punktu [%g; %g] związanego z członem %d.',point,element_no),...
     'NumberTitle','off', 'Position',[-10,-10,1000,800]);
 titles = ["Położenie x ";"Położenie y ";"Prędkość x ";"Prędkość y ";"Przyśpieszenie x ";"Przyśpieszenie y "];
 tiledlayout(3,2)
