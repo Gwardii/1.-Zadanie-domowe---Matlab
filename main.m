@@ -1,34 +1,17 @@
-%clear;
-%clc;
-tp = 0;
-h = .05;
-tk = 1.5;
-t=tp;
-numberOfSteps = round((tk-tp)/h);
-[elements,connections,guidings]=read(path);
-sizeOfq = 3*(width(elements)-1);
-q = zeros(sizeOfq,1);
-results = struct('q',zeros(sizeOfq,numberOfSteps),'q_prim',zeros(sizeOfq,numberOfSteps),...
-    'q_bis',zeros(sizeOfq,numberOfSteps));
-iter = 1;
-for element = elements(2:end)
-    q(iter:iter+2) = [element.ACS_cm;element.angle];
-    iter = iter+3;
-end
-iter = 1;
-while(t<tk+h)
-    [q,q_prim,FI_q] = velocities(q,elements,connections,guidings,t);
-    q_bis = accelerations(q,q_prim,FI_q,elements,connections,guidings,t);
-    results.q(:,iter) = q;
-    results.q_prim(:,iter) = q_prim;
-    results.q_bis(:,iter) = q_bis;
-    %tutaj zapis do pliku
-    q = q+q_prim*h+q_bis*h^2/2;
-    t=t+h;
-    iter = iter+1;
-end
-time = tp:h:tk;
+%main 
+path='kinematyka5.xlsx';
+endtime = 1.5;
+numberOfSteps = 31;
+%uzupełnij parametry powyżej
+time = linspace(0,endtime,numberOfSteps);
+[results, numberOfElements] = solver(path,endtime,numberOfSteps);
+%funkcje do rysowania wykresów:
+%rysuj wykresy dla członu nr. element_no
 plot_result = @(element_no)plot_result(element_no,results,time);
+%rysuj wykresy dla punktu związanego z członem nr. element_no o
+%współrzędnych point w układzie związanym z członem
 plot_point_lcs = @(point,element_no)plot_point(point,element_no,results,time);
+%rysuj wykresy dla punktu związanego z członem nr. element_no o
+%współrzędnych point w fazie początkowej w układzie absolutnym
 plot_point_acs = @(point,element_no)...
     plot_point(point-results.q(3*element_no-2:3*element_no-1,1),element_no,results,time);

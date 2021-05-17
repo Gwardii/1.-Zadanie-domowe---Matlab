@@ -1,11 +1,9 @@
-function results = solve(path,time)
-tp = time(1);
-h = time(2)-time(1);
-tk = time(end);
-t=tp;
-numberOfSteps = round((tk-tp)/h);
+function [results, numberOfElements] = solver(path,endtime,numberOfSteps)
+time = linspace(0,endtime,numberOfSteps);
+h=time(2)-time(1);
 [elements,connections,guidings]=read(path);
-sizeOfq = 3*(width(elements)-1);
+numberOfElements = width(elements)-1;
+sizeOfq = 3*numberOfElements;
 q = zeros(sizeOfq,1);
 results = struct('q',zeros(sizeOfq,numberOfSteps),'q_prim',zeros(sizeOfq,numberOfSteps),...
     'q_bis',zeros(sizeOfq,numberOfSteps));
@@ -15,15 +13,12 @@ for element = elements(2:end)
     iter = iter+3;
 end
 iter = 1;
-while(t<tk+h)
+for t = time
     [q,q_prim,FI_q] = velocities(q,elements,connections,guidings,t);
     q_bis = accelerations(q,q_prim,FI_q,elements,connections,guidings,t);
     results.q(:,iter) = q;
     results.q_prim(:,iter) = q_prim;
     results.q_bis(:,iter) = q_bis;
-    %tutaj zapis do pliku
     q = q+q_prim*h+q_bis*h^2/2;
-    t=t+h;
     iter = iter+1;
-end
 end
