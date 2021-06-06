@@ -1,9 +1,18 @@
-function [FI,FI_q,FI_t] = constraints(q,elements,connections,guidings,t)
+function [FI,FI_q,FI_t] = constraints(q,t,varargin)
+persistent elements connections guidings
+if nargin > 2
+    elements = varargin{1};
+    if nargin > 3
+        connections = varargin{2};
+        if nargin > 4
+            guidings = varargin{3};
+        end
+    end
+end
 FI=[];
 FI_q=zeros(0,height(q));
 FI_t=zeros(2*(width(connections.pin)+width(connections.slider)),1);
 Omega = [0,-1;1,0];
-eps = 1e-6;
 for connection = connections.pin
     i=connection.connection(1);
     j=connection.connection(2);
@@ -156,12 +165,10 @@ for guiding = guidings
     formulaDiff = matlabFunction(diff(sym(formula)));
     FI_t(end+1) = -formulaDiff(t);
 end
-if height(FI_q) == width(FI_q)
-    if abs(det(FI_q)) <= eps
+if height(FI_q) <= width(FI_q)
+    if rank(FI_q) < height(FI_q)
         throw(MException('MyComponent:singularity','Wyznacznik macierzy Jacobiego zeruje się -> układ znalazł się w położeniu osobliwym')) 
     end
-elseif height(FI_q) < width(FI_q)
-    throw(MException('MyComponent:notEnoughConstraints','Zadane więzy (kinematyczne i kierujące) nie odbierają wszystkich stopni swobody'))
 else
     throw(MException('MyComponent:tooManyConstraints','Zadane więzy (kinematyczne i kierujące) przesztywniają układ -> rozwiązanie dla ciał sztywnych niemożliwe'))
 end

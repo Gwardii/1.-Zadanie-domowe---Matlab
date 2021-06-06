@@ -1,6 +1,16 @@
-function [q_bis,Gamma] = accelerations(q,q_prim,FI_q,elements,connections,guidings,t)
+function Gamma = gammaFunction(q,q_prim,t,varargin)
+persistent elements connections guidings
+if nargin > 3
+    elements = varargin{1};
+    if nargin > 4
+        connections = varargin{2};
+        if nargin > 5
+            guidings = varargin{3};
+        end
+    end
+end
 Omega = [0,-1;1,0];
-Gamma = zeros(height(q),1);
+Gamma = zeros(2*(width(connections.pin)+width(connections.slider)),1);
 iter = 1;
 for connection = connections.pin
     i=connection.connection(1);
@@ -120,5 +130,4 @@ for guiding = guidings
     end
     iter = iter+1;
 end
-q_bis=FI_q\Gamma;
 end
