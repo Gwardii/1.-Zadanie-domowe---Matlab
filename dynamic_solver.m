@@ -22,19 +22,20 @@ results.q_prim = Y(:,sizeOfq+1:end)';
 results.q_bis = results.q;
 results.q_error = time;
 results.q_prim_error = time;
+results.q_bis_error = time;
 iter = 1;
 for t = time'
-    [dY,FI,FI_q] = equations(t,Y(iter,:)');
+    [dY,FI,FI_q,Gamma] = equations(t,Y(iter,:)');
     results.q_bis(:,iter) = dY(sizeOfq+1:end);
     results.q_error(iter) = norm(FI);
     results.q_prim_error(iter) = norm(FI_q*dY(1:sizeOfq));
+    results.q_bis_error(iter) = norm(FI_q*dY(sizeOfq+1:end)-Gamma);
     iter = iter+1;
 end
-plot(time,results.q_error);
 end
-function [dY,FI,FI_q] = equations(t,Y)
+function [dY,FI,FI_q,Gamma] = equations(t,Y)
 alfa = 5;
-beta = 5;
+beta = alfa;
 q = Y(1:height(Y)/2);
 q_prim = Y(height(Y)/2+1:end);
 M = mass_matrix();
